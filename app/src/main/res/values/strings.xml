@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">CodedataNotebookApp</string>
     <string name="my_android_tutorial">My Android Tutorial</string>
+    <string name="search">Search</string>
+    <string name="add">Add</string>
+    <string name="revert">Revert</string>
+    <string name="delete">Delete</string>
 </resources>
