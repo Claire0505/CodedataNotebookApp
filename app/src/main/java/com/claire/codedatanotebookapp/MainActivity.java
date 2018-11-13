@@ -14,6 +14,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
     private RecyclerViewAdapter adapter;
@@ -25,20 +26,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setRecyclerView();
+        initData();
+        initRecyclerView();
     }
 
-    private void setRecyclerView() {
+    private void initData() {
         //建立測式資料
         myDataSet = new ArrayList<>();
         for (int i = 0; i < 50; i++) {
             myDataSet.add("Android Tutorial " + i);
         }
+    }
 
+    private void initRecyclerView() {
         recyclerView = findViewById(R.id.recycler);
         recyclerView.setHasFixedSize(true);
         linearLayoutManager = new LinearLayoutManager(this);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setItemAnimator(new DefaultItemAnimator()); // 這個主要用於當一個item添加或者刪除的時候出現的動畫效果
         recyclerView.setLayoutManager(linearLayoutManager);
         adapter = new RecyclerViewAdapter(myDataSet);
         recyclerView.setAdapter(adapter);
@@ -57,8 +61,11 @@ public class MainActivity extends AppCompatActivity {
        adapter.setOnItemLongClickListener(new OnItemLongClickListener() {
            @Override
            public void onItemLongClick(View view, int position) {
-               Toast.makeText(MainActivity.this,"OnItemLongClick: " + myDataSet.get(position),
-                       Toast.LENGTH_SHORT).show();
+               // 長按某個item後，將移除這個item
+               adapter.removeData(position);
+               //adapter.addData(position);
+               //adapter.changeData(position);
+
            }
        });
     }

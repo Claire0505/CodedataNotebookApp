@@ -96,4 +96,23 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
     }
 
+    //移除数据
+    public void removeData(int position){
+        mData.remove(position);
+        // 該方法用於刪除一個數據的時候,position表示數據刪除的位置
+        notifyItemRemoved(position);
+        notifyItemChanged(position, mData.size()-position);
+    }
+    //新增數據
+    public void addData(int position){
+        mData.add(position, "Add One");
+        // 該方法用於當增加一個數據的時候,position表示新增數據顯示的位置
+        notifyItemInserted(position);
+    }
+    //更改某個位置的數據
+    public void changeData(int position){
+        mData.set(position, "Item has changed");
+        notifyItemChanged(position);
+    }
+
 }
