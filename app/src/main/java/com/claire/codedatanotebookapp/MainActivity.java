@@ -1,11 +1,10 @@
 package com.claire.codedatanotebookapp;
 
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,6 +14,11 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+    private RecyclerView recyclerView;
+    private LinearLayoutManager linearLayoutManager;
+    private RecyclerViewAdapter adapter;
+
+    private ArrayList<String> myDataSet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,17 +30,37 @@ public class MainActivity extends AppCompatActivity {
 
     private void setRecyclerView() {
         //建立測式資料
-        ArrayList<String> myDataSet = new ArrayList<>();
-        for (int i = 0 ; i < 50; i++){
+        myDataSet = new ArrayList<>();
+        for (int i = 0; i < 50; i++) {
             myDataSet.add("Android Tutorial " + i);
         }
 
-        RecyclerView recyclerView = findViewById(R.id.recycler);
+        recyclerView = findViewById(R.id.recycler);
         recyclerView.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(linearLayoutManager);
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(myDataSet);
+        adapter = new RecyclerViewAdapter(myDataSet);
         recyclerView.setAdapter(adapter);
+
+        // 接著在MainActivity.java中設置監聽器，採用匿名內部類的形式實現了onItemClickListener、onItemLongClickListener接口
+        // 調用在RecyclerViewAdapter建立的點擊事件
+        adapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Toast.makeText(MainActivity.this, myDataSet.get(position),
+                        Toast.LENGTH_SHORT).show();
+            }
+
+        });
+
+       adapter.setOnItemLongClickListener(new OnItemLongClickListener() {
+           @Override
+           public void onItemLongClick(View view, int position) {
+               Toast.makeText(MainActivity.this,"OnItemLongClick: " + myDataSet.get(position),
+                       Toast.LENGTH_SHORT).show();
+           }
+       });
     }
 
     @Override
@@ -48,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.search_item:
                 Toast.makeText(this, R.string.search, Toast.LENGTH_SHORT).show();
                 return true;
