@@ -5,4 +5,5 @@
     <string name="add">Add</string>
     <string name="revert">Revert</string>
     <string name="delete">Delete</string>
+    <string name="left_swipe_delete">左滑删除</string>
 </resources>

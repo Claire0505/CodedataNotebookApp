@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Collections;
@@ -89,12 +90,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     // 一定要使用ViewHolder包裝畫面元件
     public class ViewHolder extends RecyclerView.ViewHolder{
-        private TextView textView;
+         TextView textView;
+         TextView tv;
+         ImageView image;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             textView = itemView.findViewById(R.id.textItem);
-
+            tv = itemView.findViewById(R.id.tv_text);
+            image = itemView.findViewById(R.id.iv_img);
         }
     }
 

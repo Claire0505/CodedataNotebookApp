@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemLongClick(View view, int position) {
                 // 長按某個item後，將移除這個item
-                //adapter.removeData(position);
+                adapter.removeData(position);
                 //adapter.addData(position);
                 //adapter.changeData(position);
 
@@ -71,8 +71,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //step.3為RecycleView添加ItemTouchHelper
+        //先實例化Callback
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(adapter);
+        //用Callback構造ItemTouchHelper
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        //調用ItemTouchHelper的attachToRecyclerView方法建立聯繫
         touchHelper.attachToRecyclerView(recyclerView);
 
     }

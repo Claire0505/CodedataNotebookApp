@@ -1,16 +1,81 @@
 package com.claire.codedatanotebookapp;
 
+import android.graphics.Canvas;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 // step.2新建類繼承自ItemTouchHelper.Callback
 public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
-    private ItemTouchHelperAdapter mAdapter;
+    private RecyclerViewAdapter mAdapter;
 
-    public SimpleItemTouchHelperCallback(ItemTouchHelperAdapter mAdapter) {
+    //限制ImageView的長度所能增加的最大值
+    private double ICON_MAX_SIZE = 50;
+    //ImageView的初始长宽
+    private int fixedWidth = 150;
+
+    public SimpleItemTouchHelperCallback(RecyclerViewAdapter mAdapter) {
         this.mAdapter = mAdapter;
+    }
+
+    @Override
+    public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+        super.clearView(recyclerView, viewHolder);
+        //重置改變，防止由於復用而導致的顯示問題
+        viewHolder.itemView.setScrollX(0);
+        ((RecyclerViewAdapter.ViewHolder)viewHolder).tv.setText("左滑删除");
+        FrameLayout.LayoutParams params =
+                (FrameLayout.LayoutParams)((RecyclerViewAdapter.ViewHolder)viewHolder).image.getLayoutParams();
+        params.width = 150;
+        params.height = 150;
+        ((RecyclerViewAdapter.ViewHolder)viewHolder).image.setLayoutParams(params);
+        ((RecyclerViewAdapter.ViewHolder)viewHolder).image.setVisibility(View.INVISIBLE);
+
+    }
+
+    @Override
+    public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView,
+                            @NonNull RecyclerView.ViewHolder viewHolder,
+                            float dX, float dY, int actionState, boolean isCurrentlyActive) {
+        //僅對側滑狀態下的效果做出改變
+        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE){
+            //如果dX小於等於刪除方塊的寬度，那麼我們把該方塊滑出來
+            if (Math.abs(dX) <= getSlideLimitation(viewHolder)){
+                viewHolder.itemView.scrollTo(-(int) dX,0);
+            }
+        }
+        //如果dX還未達到能刪除的距離，此時慢慢增加“圖片”的大小，增加的最大值為ICON_MAX_SIZE
+        else if (Math.abs(dX) <= recyclerView.getWidth() / 2){
+            double distance = (recyclerView.getWidth() / 2 -getSlideLimitation(viewHolder));
+            double factor = ICON_MAX_SIZE / distance;
+            double diff =  (Math.abs(dX) - getSlideLimitation(viewHolder)) * factor;
+            if (diff >= ICON_MAX_SIZE)
+                diff = ICON_MAX_SIZE;
+            ((RecyclerViewAdapter.ViewHolder)viewHolder).tv.setText("");   //把文字去掉
+            ((RecyclerViewAdapter.ViewHolder) viewHolder).image.setVisibility(View.VISIBLE);  //显示圖片
+            FrameLayout.LayoutParams params =
+                    (FrameLayout.LayoutParams) ((RecyclerViewAdapter.ViewHolder) viewHolder).image.getLayoutParams();
+            params.width = (int) (fixedWidth + diff);
+            params.height = (int) (fixedWidth + diff);
+            ((RecyclerViewAdapter.ViewHolder) viewHolder).image.setLayoutParams(params);
+
+        } else {
+            //拖拽狀態下不做改變，需要調用父類的方法
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+        }
+
+    }
+
+    /**
+    獲取刪除方塊的寬度
+     */
+    public int getSlideLimitation (RecyclerView.ViewHolder viewHolder){
+        ViewGroup viewGroup = (ViewGroup)viewHolder.itemView;
+        return viewGroup.getChildAt(1).getLayoutParams().width;
     }
 
     /**
