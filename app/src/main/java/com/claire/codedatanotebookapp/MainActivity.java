@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -58,16 +59,22 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-       adapter.setOnItemLongClickListener(new OnItemLongClickListener() {
-           @Override
-           public void onItemLongClick(View view, int position) {
-               // 長按某個item後，將移除這個item
-               adapter.removeData(position);
-               //adapter.addData(position);
-               //adapter.changeData(position);
+        adapter.setOnItemLongClickListener(new OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(View view, int position) {
+                // 長按某個item後，將移除這個item
+                //adapter.removeData(position);
+                //adapter.addData(position);
+                //adapter.changeData(position);
 
-           }
-       });
+            }
+        });
+
+        //step.3為RecycleView添加ItemTouchHelper
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(adapter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(recyclerView);
+
     }
 
     @Override

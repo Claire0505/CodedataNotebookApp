@@ -7,9 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.Collections;
 import java.util.List;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
+public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>
+        implements ItemTouchHelperAdapter{
     private List<String> mData;
 
     public RecyclerViewAdapter(List<String> mData) {
@@ -114,5 +116,22 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         mData.set(position, "Item has changed");
         notifyItemChanged(position);
     }
+
+    // 實現ItemTouchHelperAdapter接口
+    @Override
+    public void onItemMove(int fromPosition, int position) {
+        // 交換位置
+        Collections.swap(mData, fromPosition, position);
+        notifyItemMoved(fromPosition, position);
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
+        // 刪除數據
+        mData.remove(position);
+        notifyItemRemoved(position);
+        notifyItemChanged(position, mData.size()-position);
+    }
+
 
 }
