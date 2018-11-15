@@ -1,5 +1,8 @@
 package com.claire.codedatanotebookapp;
 
+import android.graphics.Color;
+import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -12,23 +15,41 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+
+import com.claire.codedatanotebookapp.old_recycleradapter.RecyclerViewAdapter;
+import com.claire.codedatanotebookapp.old_recycleradapter.SimpleItemTouchHelperCallback;
+
 import java.util.ArrayList;
+import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+/**
+ * 創建RecyclerItemTouchHelper的實例並將其分配給RecyclerView。這裡只定義LEFT方向。
+ * 執行滑動時將調用onSwiped（）方法。這裡是刪除行項的重要步驟。
+ * 調用mAdapter.removeItem（）以從RecyclerView中刪除該行。
+ * 刪除行後，Snackbar用於顯示帶有UNDO選項的消息。在單擊UNDO時，使用mAdapter.restoreItem（）方法恢復該行。
+ *  deletedItem，deletedIndex變量用於臨時存儲已刪除的項目和索引，直到顯示Snackbar。
+ */
 
-    private RecyclerView recyclerView;
-    private LinearLayoutManager linearLayoutManager;
+public class MainActivity extends AppCompatActivity
+        implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
+
     private RecyclerViewAdapter adapter;
-
     private ArrayList<String> myDataSet;
+
+    private RecyclerAdapter mAdapter;
+    private List<Item> itemList;
+    private ConstraintLayout constraintLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initData();
-        initRecyclerView();
+        //initData();
+        //initRecyclerView();
+
+        testData();
+        initRecyclerView2();
     }
 
     private void initData() {
@@ -39,10 +60,71 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void initRecyclerView() {
-        recyclerView = findViewById(R.id.recycler);
+    private void testData(){
+        itemList = new ArrayList<>();
+        itemList.add(new Item("Android Tutorial 01" ));
+        itemList.add(new Item("Android Tutorial 02" ));
+        itemList.add(new Item("Android Tutorial 03" ));
+        itemList.add(new Item("Android Tutorial 04" ));
+        itemList.add(new Item("Android Tutorial 05" ));
+        itemList.add(new Item("Android Tutorial 06" ));
+        itemList.add(new Item("Android Tutorial 07" ));
+        itemList.add(new Item("Android Tutorial 08" ));
+        itemList.add(new Item("Android Tutorial 09" ));
+        itemList.add(new Item("Android Tutorial 10" ));
+        itemList.add(new Item("Android Tutorial 11" ));
+        itemList.add(new Item("Android Tutorial 12" ));
+    }
+
+    private void initRecyclerView2() {
+        constraintLayout = findViewById(R.id.constraintLayout);
+        RecyclerView recyclerView = findViewById(R.id.recycler);
         recyclerView.setHasFixedSize(true);
-        linearLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setItemAnimator(new DefaultItemAnimator()); // 這個主要用於當一個item添加或者刪除的時候出現的動畫效果
+        recyclerView.setLayoutManager(linearLayoutManager);
+        mAdapter = new RecyclerAdapter(this, itemList);
+        recyclerView.setAdapter(mAdapter);
+
+        // 接著在MainActivity.java中設置監聽器，採用匿名內部類的形式實現了onItemClickListener、onItemLongClickListener接口
+        // 調用在RecyclerViewAdapter建立的點擊事件
+        mAdapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Toast.makeText(MainActivity.this, itemList.get(position).getTitle(),
+                        Toast.LENGTH_SHORT).show();
+            }
+
+        });
+
+        mAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(View view, int position) {
+                // 長按某個item後，將移除這個item
+                mAdapter.removeData(position);
+                //adapter.addData(position);
+                //adapter.changeData(position);
+
+            }
+        });
+
+        /**
+            adding item touch helper
+            only ItemTouchHelper.LEFT added to detect Right to Left swipe
+            僅添加ItemTouchHelper.LEFT以檢測從右向左滑動
+            如果你想要Right -> Left 和 Left -> Right
+            添加傳遞ItemTouchHelper.LEFT | ItemTouchHelper.Right 作為參數
+         */
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback =
+                new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
+    }
+
+
+    private void initRecyclerView() {
+        RecyclerView recyclerView = findViewById(R.id.recycler);
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setItemAnimator(new DefaultItemAnimator()); // 這個主要用於當一個item添加或者刪除的時候出現的動畫效果
         recyclerView.setLayoutManager(linearLayoutManager);
         adapter = new RecyclerViewAdapter(myDataSet);
@@ -109,5 +191,46 @@ public class MainActivity extends AppCompatActivity {
 
     public void aboutApp(View view) {
         Toast.makeText(this, R.string.app_name, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+        callback when recycler view is swiped (刷新回收視圖時的回調)
+        item will be removed on swiped (物品將被刷掉)
+        undo option will be provided in Snackbar to restore the item (提供撤消選項以恢復該項目)
+     */
+    @Override
+    public void onSwipe(RecyclerView.ViewHolder viewHolder, int direction, int position) {
+        if (viewHolder instanceof  RecyclerAdapter.ViewHolder){
+            // get the removed item name to display it int snackbar
+            final String title = itemList.get(viewHolder.getAdapterPosition()).getTitle();
+
+            // backup of removed item for undo purpose
+            final Item deletedItem = itemList.get(viewHolder.getAdapterPosition());
+            final int deletedIndex = viewHolder.getAdapterPosition();
+
+            // remove the item from recycler view
+            mAdapter.removeItem(viewHolder.getAdapterPosition());
+
+            // showing snack bar with Undo option
+            Snackbar snackbar = Snackbar
+                    .make(constraintLayout, title + " removed from item!", Snackbar.LENGTH_LONG);
+            snackbar.setAction("UNDO", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // undo is selected, restore the deleted item
+                    mAdapter.restoreItem(deletedItem, deletedIndex);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            initRecyclerView2();
+                        }
+                    });
+                }
+            });
+            snackbar.setActionTextColor(Color.YELLOW);
+            snackbar.show();
+        }
+
     }
 }

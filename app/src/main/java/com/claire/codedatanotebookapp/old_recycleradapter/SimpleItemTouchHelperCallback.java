@@ -1,4 +1,4 @@
-package com.claire.codedatanotebookapp;
+package com.claire.codedatanotebookapp.old_recycleradapter;
 
 import android.graphics.Canvas;
 import android.support.annotation.NonNull;
@@ -27,13 +27,13 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
         super.clearView(recyclerView, viewHolder);
         //重置改變，防止由於復用而導致的顯示問題
         viewHolder.itemView.setScrollX(0);
-        ((RecyclerViewAdapter.ViewHolder)viewHolder).tv.setText("左滑删除");
+        ((RecyclerViewAdapter.ViewHolder)viewHolder).tv_delete.setText("左滑删除");
         FrameLayout.LayoutParams params =
-                (FrameLayout.LayoutParams)((RecyclerViewAdapter.ViewHolder)viewHolder).image.getLayoutParams();
+                (FrameLayout.LayoutParams)((RecyclerViewAdapter.ViewHolder)viewHolder).image_delete.getLayoutParams();
         params.width = 150;
         params.height = 150;
-        ((RecyclerViewAdapter.ViewHolder)viewHolder).image.setLayoutParams(params);
-        ((RecyclerViewAdapter.ViewHolder)viewHolder).image.setVisibility(View.INVISIBLE);
+        ((RecyclerViewAdapter.ViewHolder)viewHolder).image_delete.setLayoutParams(params);
+        ((RecyclerViewAdapter.ViewHolder)viewHolder).image_delete.setVisibility(View.INVISIBLE);
 
     }
 
@@ -55,13 +55,13 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
             double diff =  (Math.abs(dX) - getSlideLimitation(viewHolder)) * factor;
             if (diff >= ICON_MAX_SIZE)
                 diff = ICON_MAX_SIZE;
-            ((RecyclerViewAdapter.ViewHolder)viewHolder).tv.setText("");   //把文字去掉
-            ((RecyclerViewAdapter.ViewHolder) viewHolder).image.setVisibility(View.VISIBLE);  //显示圖片
+            ((RecyclerViewAdapter.ViewHolder)viewHolder).tv_delete.setText("");   //把文字去掉
+            ((RecyclerViewAdapter.ViewHolder) viewHolder).image_delete.setVisibility(View.VISIBLE);  //显示圖片
             FrameLayout.LayoutParams params =
-                    (FrameLayout.LayoutParams) ((RecyclerViewAdapter.ViewHolder) viewHolder).image.getLayoutParams();
+                    (FrameLayout.LayoutParams) ((RecyclerViewAdapter.ViewHolder) viewHolder).image_delete.getLayoutParams();
             params.width = (int) (fixedWidth + diff);
             params.height = (int) (fixedWidth + diff);
-            ((RecyclerViewAdapter.ViewHolder) viewHolder).image.setLayoutParams(params);
+            ((RecyclerViewAdapter.ViewHolder) viewHolder).image_delete.setLayoutParams(params);
 
         } else {
             //拖拽狀態下不做改變，需要調用父類的方法

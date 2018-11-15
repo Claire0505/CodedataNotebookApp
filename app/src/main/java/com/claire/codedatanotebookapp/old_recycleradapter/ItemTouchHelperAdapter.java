@@ -1,4 +1,4 @@
-package com.claire.codedatanotebookapp;
+package com.claire.codedatanotebookapp.old_recycleradapter;
 
 // step.1新建一個接口，讓Adapter實現之
 public interface ItemTouchHelperAdapter {

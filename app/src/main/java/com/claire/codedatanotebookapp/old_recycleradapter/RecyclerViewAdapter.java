@@ -1,4 +1,4 @@
-package com.claire.codedatanotebookapp;
+package com.claire.codedatanotebookapp.old_recycleradapter;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -8,16 +8,37 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.claire.codedatanotebookapp.OnItemClickListener;
+import com.claire.codedatanotebookapp.OnItemLongClickListener;
+import com.claire.codedatanotebookapp.R;
+
 import java.util.Collections;
 import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>
-        implements ItemTouchHelperAdapter{
+        implements ItemTouchHelperAdapter {
     private List<String> mData;
 
     public RecyclerViewAdapter(List<String> mData) {
         this.mData = mData;
     }
+
+    // 一定要使用ViewHolder包裝畫面元件
+    public class ViewHolder extends RecyclerView.ViewHolder{
+        TextView textTitle;
+        TextView textDate;
+        TextView tv_delete;
+        ImageView image_delete;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            textTitle = itemView.findViewById(R.id.textItem);
+            textDate = itemView.findViewById(R.id.textDate);
+            tv_delete = itemView.findViewById(R.id.delete_text);
+            image_delete = itemView.findViewById(R.id.deleteImage);
+        }
+    }
+
 
     // ⑴ RecyclerView沒有點擊事件，所以自定兩個Interface接口來摸擬ListView的OnItemClickListener
     // ⑵ 新建兩個私有變量用於保存用戶設置的監聽器及其set方法：
@@ -44,7 +65,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int position) {
-        viewHolder.textView.setText(mData.get(position));
+        viewHolder.textTitle.setText(mData.get(position));
 
         /*
         這裡實際上用到了 子Item View的onClickListener和onLongClickListener這兩個監聽器，
@@ -86,20 +107,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public int getItemCount() {
         return mData.size();
-    }
-
-    // 一定要使用ViewHolder包裝畫面元件
-    public class ViewHolder extends RecyclerView.ViewHolder{
-         TextView textView;
-         TextView tv;
-         ImageView image;
-
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            textView = itemView.findViewById(R.id.textItem);
-            tv = itemView.findViewById(R.id.tv_text);
-            image = itemView.findViewById(R.id.iv_img);
-        }
     }
 
     //移除数据
