@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:background="@drawable/rectangle_drawable"
+    android:orientation="vertical"
+    tools:context=".AboutActivity">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_margin="4dp"
+        android:padding="4dp"
+        android:textSize="18sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/dark_text"
+        android:text="@string/about_app" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_margin="4dp"
+        android:textSize="18sp"
+        android:padding="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/dark_text"
+        android:text="@string/version" />
+
+    <Button
+        android:onClick="clickOK"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_margin="4dp"
+        android:padding="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@android:string/ok" />
+</LinearLayout>

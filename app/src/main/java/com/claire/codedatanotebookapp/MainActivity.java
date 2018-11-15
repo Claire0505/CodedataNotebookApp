@@ -1,5 +1,6 @@
 package com.claire.codedatanotebookapp;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
@@ -162,37 +163,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.search_item:
-                Toast.makeText(this, R.string.search, Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.add_item:
-                Toast.makeText(this, R.string.add, Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.revert_item:
-                return true;
-            case R.id.delete_item:
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-
-        }
-
-    }
-
-    public void aboutApp(View view) {
-        Toast.makeText(this, R.string.app_name, Toast.LENGTH_SHORT).show();
-    }
-
     /**
         callback when recycler view is swiped (刷新回收視圖時的回調)
         item will be removed on swiped (物品將被刷掉)
@@ -233,4 +203,36 @@ public class MainActivity extends AppCompatActivity
         }
 
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.search_item:
+                Toast.makeText(this, R.string.search, Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.add_item:
+                Toast.makeText(this, R.string.add, Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.revert_item:
+                return true;
+            case R.id.delete_item:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+
+    }
+
+    public void aboutApp(View view) {
+        startActivity(new Intent(MainActivity.this, AboutActivity.class));
+    }
+
 }
